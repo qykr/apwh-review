@@ -29,11 +29,9 @@ RUN npm ci --omit=dev
 # Only copy what’s needed to run the app
 COPY --from=base /app/package.json ./
 COPY --from=base /app/build ./build
-COPY --from=base /app/.svelte-kit ./.svelte-kit
 
 # Set environment
 ENV NODE_ENV=production
-ENV OPENAI_API_KEY=$OPENAI_API_KEY
 
 # Expose the default port
 EXPOSE 3000
