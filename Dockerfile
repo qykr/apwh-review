@@ -1,5 +1,5 @@
 # --- Base Stage: Build the app ---
-FROM node:23-alpine AS base
+FROM node:slim AS base
 
 WORKDIR /app
 
@@ -15,9 +15,12 @@ RUN npm run build
 
 
 # --- Production Stage: Create minimal image for runtime ---
-FROM node:23-alpine AS prod
+FROM cgr.dev/chainguard/wolfi-base AS prod
 
 WORKDIR /app
+
+# Install npm and node
+RUN apk add --update nodejs npm
 
 # Only install production dependencies
 COPY package.json package-lock.json ./
@@ -26,10 +29,11 @@ RUN npm ci --omit=dev
 # Only copy what’s needed to run the app
 COPY --from=base /app/package.json ./
 COPY --from=base /app/build ./build
-COPY --from=base /app/.svelte-kit ./.svelte-kit
+#COPY --from=base /app/.svelte-kit ./.svelte-kit
 
 # Set environment
 ENV NODE_ENV=production
+ENV OPENAI_API_KEY=$OPENAI_API_KEY
 
 # Expose the default port
 EXPOSE 3000
