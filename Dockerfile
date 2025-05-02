@@ -15,12 +15,12 @@ RUN npm run build
 
 
 # --- Production Stage: Create minimal image for runtime ---
-FROM cgr.dev/chainguard/wolfi-base AS prod
+FROM cgr.dev/chainguard/node AS prod
 
 WORKDIR /app
 
 # Install npm and node
-RUN apk add --update nodejs npm
+#RUN apk add --update nodejs npm
 
 # Only install production dependencies
 COPY package.json package-lock.json ./
