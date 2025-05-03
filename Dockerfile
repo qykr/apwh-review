@@ -15,12 +15,9 @@ RUN npm run build
 
 
 # --- Production Stage: Create minimal image for runtime ---
-FROM cgr.dev/chainguard/wolfi-base AS prod
+FROM cgr.dev/chainguard/node AS prod
 
 WORKDIR /app
-
-# Install npm and node
-RUN apk add --update nodejs npm
 
 # Only install production dependencies
 COPY package.json package-lock.json ./
@@ -37,4 +34,4 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Start the SvelteKit server (adapter-node builds to `build`)
-CMD ["node", "build"]
+CMD ["build"]
