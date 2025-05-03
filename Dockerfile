@@ -12,23 +12,20 @@ COPY . .
 
 # Build the SvelteKit app
 RUN npm run build
-
+RUN npm ci --omit=dev
 
 # --- Production Stage: Create minimal image for runtime ---
-FROM cgr.dev/chainguard/wolfi-base AS prod
+FROM gcr.io/distroless/nodejs22-debian12 AS prod
 
 WORKDIR /app
 
-# Install npm and node
-RUN apk add --update nodejs npm
-
 # Only install production dependencies
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
 
 # Only copy what’s needed to run the app
 COPY --from=base /app/package.json ./
 COPY --from=base /app/build ./build
+COPY --from=base /app/.svelte-kit ./.svelte-kit
 
 # Set environment
 ENV NODE_ENV=production
